@@ -162,7 +162,7 @@ async def on_member_join(member):
 
 # ================= RUN =================
 bot.run(TOKEN)
-
+# ================= Delet ==================
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def reset(ctx, confirm=None):
