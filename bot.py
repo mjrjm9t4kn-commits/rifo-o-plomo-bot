@@ -25,3 +25,22 @@ async def reset(ctx, confirm=None):
                 pass
 
     await ctx.send("🔥 Reset terminé (salons + rôles supprimés)")
+
+
+# ================= AJOUT RESET RP (SANS TOUCHER AU PREMIER) =================
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def reset_rp(ctx):
+
+    guild = ctx.guild
+
+    await ctx.send("🔄 Reset RP en cours...")
+
+    for channel in guild.channels:
+        if channel.name in ["🏙️-ville-rp", "💀-base-rifo", "🧾-missions-rp"]:
+            try:
+                await channel.delete()
+            except:
+                pass
+
+    await ctx.send("✅ Reset RP terminé (zones RP uniquement)")
