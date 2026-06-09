@@ -26,9 +26,9 @@ def add_xp(user_id):
 # ================= READY =================
 @bot.event
 async def on_ready():
-    print(f"🔥 RIFO O PLOMO GOD RP ONLINE : {bot.user}")
+    print(f"🔥 Rifo o Plomo RP ONLINE : {bot.user}")
 
-# ================= LEVEL SYSTEM =================
+# ================= XP ON MESSAGE =================
 @bot.event
 async def on_message(message):
     if message.author.bot:
@@ -43,14 +43,14 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-# ================= SETUP COMPLET GOD RP =================
+# ================= SETUP SERVEUR RP =================
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def setup(ctx):
 
     guild = ctx.guild
 
-    # ================= ROLES =================
+    # ROLES
     roles = [
         "👑 Boss Rifo",
         "💀 Bras droit",
@@ -62,7 +62,7 @@ async def setup(ctx):
     for r in roles:
         await guild.create_role(name=r)
 
-    # ================= CATEGORIES =================
+    # CATEGORIES
     cat_info = await guild.create_category("📢 INFO RIFO O PLOMO")
     cat_rp = await guild.create_category("🏙️ RP CITY")
     cat_gang = await guild.create_category("💀 BASE RIFO")
@@ -70,35 +70,35 @@ async def setup(ctx):
     cat_voice = await guild.create_category("🔊 VOCAL RP")
     cat_logs = await guild.create_category("📜 LOGS")
 
-    # ================= INFO =================
+    # INFO
     rules = await guild.create_text_channel("📜-règlement-rp", category=cat_info)
     await guild.create_text_channel("📢-annonces", category=cat_info)
 
-    # ================= RP =================
+    # RP
     await guild.create_text_channel("🏙️-ville-rp", category=cat_rp)
     await guild.create_text_channel("🚓-police-rp", category=cat_rp)
     await guild.create_text_channel("🧾-missions-rp", category=cat_rp)
 
-    # ================= BASE GANG =================
+    # GANG
     await guild.create_text_channel("💀-base-rifo", category=cat_gang)
     await guild.create_text_channel("🔫-plans", category=cat_gang)
     await guild.create_text_channel("💰-business", category=cat_gang)
 
-    # ================= SUPPORT =================
-    ticket_channel = await guild.create_text_channel("🎫-tickets", category=cat_support)
+    # SUPPORT
+    await guild.create_text_channel("🎫-tickets", category=cat_support)
     await guild.create_text_channel("📋-recrutement", category=cat_support)
 
-    # ================= VOCAL =================
+    # VOCAL
     await guild.create_voice_channel("🔊 Discussion RP", category=cat_voice)
     await guild.create_voice_channel("💀 Réunion gang", category=cat_voice)
     await guild.create_voice_channel("🚓 Police RP", category=cat_voice)
 
-    # ================= LOGS =================
+    # LOGS
     await guild.create_text_channel("📜-logs", category=cat_logs)
 
-    # ================= RÈGLEMENT =================
+    # REGLEMENT AUTO
     await rules.send("""
-🔥 **RÈGLEMENT RIFO O PLOMO RP**
+🔥 RÈGLEMENT RIFO O PLOMO RP
 
 1️⃣ Respect obligatoire
 2️⃣ No meta-gaming
@@ -109,14 +109,14 @@ async def setup(ctx):
 7️⃣ Pas de cheat
 8️⃣ Staff décision finale
 
-💀 Règle Gang :
+💀 Gang :
 - Trahison = expulsion
 - Respect Boss obligatoire
 """)
 
-    await ctx.send("🔥 GOD RP serveur Rifo o Plomo créé !")
+    await ctx.send("🔥 Serveur Rifo o Plomo RP créé !")
 
-# ================= TICKETS GOD SYSTEM =================
+# ================= TICKETS =================
 class CloseTicketView(discord.ui.View):
     @discord.ui.button(label="🔒 Fermer ticket", style=discord.ButtonStyle.red)
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -136,7 +136,7 @@ class TicketView(discord.ui.View):
             "Explique ta demande (recrutement / support RP)."
         )
 
-        await channel.send("🔒 Ferme le ticket :", view=CloseTicketView())
+        await channel.send("🔒 Ferme le ticket ici :", view=CloseTicketView())
 
         await interaction.response.send_message("🎫 Ticket créé !", ephemeral=True)
 
@@ -144,34 +144,17 @@ class TicketView(discord.ui.View):
 async def ticket(ctx):
     await ctx.send("Clique pour ouvrir un ticket 👇", view=TicketView())
 
-# ================= COMMANDE RESET SERVEUR =================
+# ================= LOCK SERVER =================
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def reset(ctx, confirm=None):
+async def lock(ctx):
 
-    if confirm != "CONFIRMER":
-        return await ctx.send("⚠️ Tape `!reset CONFIRMER` pour supprimer tout le serveur.")
+    for channel in ctx.guild.text_channels:
+        overwrite = channel.overwrites_for(ctx.guild.default_role)
+        overwrite.send_messages = False
+        await channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
 
-    guild = ctx.guild
-
-    await ctx.send("💥 Suppression du serveur en cours...")
-
-    # ================= SUPPRESSION SALONS =================
-    for channel in guild.channels:
-        try:
-            await channel.delete()
-        except:
-            pass
-
-    # ================= SUPPRESSION RÔLES =================
-    for role in guild.roles:
-        if role.name != "@everyone":
-            try:
-                await role.delete()
-            except:
-                pass
-
-    await ctx.send("🔥 Reset terminé (salons + rôles supprimés)")
+    await ctx.send("🔒 Serveur verrouillé (mode lockdown RP)")
 
 # ================= COMMANDES =================
 @bot.command()
@@ -182,16 +165,12 @@ async def ping(ctx):
 async def rifo(ctx):
     await ctx.send("🔥 Rifo o Plomo domine le RP")
 
-# ================= BIENVENUE =================
+# ================= JOIN =================
 @bot.event
 async def on_member_join(member):
     role = discord.utils.get(member.guild.roles, name="⚠️ Recrue")
     if role:
         await member.add_roles(role)
-
-    channel = discord.utils.get(member.guild.text_channels, name="🏙️-ville-rp")
-    if channel:
-        await channel.send(f"👋 Bienvenue {member.mention} dans le RP Rifo o Plomo !")
 
 # ================= RUN =================
 bot.run(TOKEN)
