@@ -53,4 +53,5 @@ async def on_member_join(member):
         await channel.send(f"👋 Bienvenue {member.mention} sur Rifo o Plomo !")
 
 # ================= TOKEN =================
-bot.run("TON_TOKEN_ICI")
+import os
+bot.run(os.getenv("TOKEN"))
